@@ -45,7 +45,8 @@ end
 %make random data
 for i=1:ndat
    for j=1:nprobes
-      eta(i,j)=sum(sum(eamp.*trf(:,:,j).*cos(layout(1,j)*wns*cos(dirs)+layout(2,j)*wns*sin(dirs)-freqmat*t(i)+randphase)));
+      % eta(i,j)=sum(sum(eamp.*trf(:,:,j).*cos(layout(1,j)*wns*cos(dirs)+layout(2,j)*wns*sin(dirs)-freqmat*t(i)+randphase)));
+      eta(i,j)=sum(sum(eamp.*abs(trf(:,:,j)).*cos(layout(1,j)*wns*cos(dirs)+layout(2,j)*wns*sin(dirs)-freqmat*t(i)+randphase)));
    end
 end
 
