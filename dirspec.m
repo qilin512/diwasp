@@ -75,7 +75,7 @@ if nfft>ndat;error(['Data length of ' num2str(ndat) ' too small']);end
 %calculate the cross-power spectra
 for m=1:szd
     for n=1:szd
-        [xpstmp,Ftmp]=diwasp_csd(data(:,m),data(:,n),nfft,ID.fs);
+        [xpstmp,Ftmp]=diwasp_csd(data(:,m),data(:,n),nfft,ID.fs,EP.noverlap);
         xps(m,n,:)=xpstmp(2:(nfft/2)+1);
     end
 end

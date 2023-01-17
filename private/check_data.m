@@ -16,7 +16,7 @@ function DDS=check_data(DDS,type)
 % Defaults
 %--------------------------------------------------------------------------
 SM.xaxisdir=90;
-EP.dres=180; EP.nfft=[]; EP.method='EMEP'; EP.iter=100;
+EP.dres=180; EP.nfft=[]; EP.method='EMEP'; EP.iter=100;EP.noverlap=0;
 error = '';
 
 switch type
@@ -147,6 +147,20 @@ switch type
             end
         else
             DDS.nfft=EP.nfft;
+        end
+        
+        if isfield(DDS,'noverlap')
+            if length(DDS.noverlap)~=1
+                error='noverlap';
+            elseif DDS.noverlap<0
+                DDS.noverlap=0;
+                warning('noverlap must be positive or null, it has been set to zero.')
+            elseif DDS.noverlap>=DDS.nfft
+                DDS.noverlap=DDS.nfft / 2;
+                warning('noverlap is too large and has been set to nfft/2')
+            end
+        else
+            DDS.noverlap=EP.noverlap;
         end
         
         if isfield(DDS,'iter')
