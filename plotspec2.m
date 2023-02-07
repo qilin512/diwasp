@@ -48,10 +48,10 @@ if nargin<3 || nf==1
     figure
 end
 if ~exist('isclb','var')
-    clb = 1;
+    isclb = 1;
 end
 if ~exist('islab','var')
-    clb = 1;
+    islab = 1;
 end
 
 SM = check_data(SM,2);
@@ -64,11 +64,15 @@ end
   dirs = SM.dirs;
 ffreqs = SM.freqs/(2*pi);
      S = 2*pi^2*real(SM.S)/180;
+
+if ~exist('maxf','var')
+    maxf = max(ffreqs);
+end
      
 %==========================================================================
 % RAFAEL UPDATE AUGUST 2012 - Close matrix to avoid gap on circunference
 S = [S,S(:,1)];
-dirs = [dirs;dirs(1)];
+dirs = [dirs dirs(1)];
 %==========================================================================
 
 %Convert directrions to nautical
@@ -78,7 +82,8 @@ if ptype==3 || ptype==4
       else
          xaxisdir = 90;
       end
-      dirs = dirs+pi+pi*(90-xaxisdir)/180;
+      % dirs = dirs+pi+pi*(90-xaxisdir)/180;
+      dirs = (180 + xaxisdir)*pi/180 - dirs;
 end
 
 %Surface plots

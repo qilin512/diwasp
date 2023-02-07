@@ -52,8 +52,8 @@ if(ptype==1|ptype==3)
     xlabel('frequency [Hz]');
     if(ptype==1)
         ylabel('direction [degrees]');
-%         axis([0 (max(ffreqs)) -180 180 0 (max(max(S)))]);
-        axis([0 (max(ffreqs)) 0 360 0 (max(max(S)))]);
+        axis([0 (max(ffreqs)) -180 180 0 (max(max(S)))]);
+%         axis([0 (max(ffreqs)) 0 360 0 (max(max(S)))]);
         
     else
         ylabel('direction [bearing]');

@@ -8,6 +8,10 @@ function [S, f] = diwasp_csd(x,y,nfft,fs,noverlap)
 %
 
 %Make a windowed estimate of CSD
+% To be consistent with MatLab "hann" function, the following should be
+% used, which is equivalent to win=hann(nfft) <==>
+% hann=0.5*(1-cos(2*pi*(0:(nfft-1)/2)/(nfft-1)));
+% but now we use Nocola's code.
 hann=0.5*(1-cos(2*pi*(1:nfft/2)/(nfft+1)));
 win = [hann hann(end:-1:1)];
 

@@ -1,4 +1,4 @@
-function [SM,ID]= makespec(freqlph,theta,spread,weights,Ho,ID,ndat,noise)
+function [SM,ID]= makespec(freqlph,theta,spread,weights,Ho,ID,ndat,noise, opt)
 
 %DIWASP V1.4 function
 %makespec: generates a directional wave spectra and pseudo data from the spectra
@@ -35,6 +35,13 @@ function [SM,ID]= makespec(freqlph,theta,spread,weights,Ho,ID,ndat,noise)
 %Updated by r.guedes on 29/04/2013: SM declared before running check_data
 %to avoid "non-assignment error" in case return is reached
 
+options = struct('plot', true, 'file', false, 'surface', false);
+if exist('opt','var')
+    options.plot = opt.plot;
+    options.file = opt.file;
+    options.surface = opt.surface;
+end
+
 SM = [];
 
 ID=check_data(ID,1);
@@ -50,7 +57,7 @@ nf=50;nd=60;
 ncom=size(theta,2);
 ns=size(ID.layout,2);
 
-df=(freqlph(3)-freqlph(1))/nf;
+df=(freqlph(3)-freqlph(1))/(nf-1);
 ddir=2*pi/nd;
 
 ffreqs=[freqlph(1):df:freqlph(3)]';
@@ -94,13 +101,17 @@ spec=fac*fac*spec;
 
 SM.freqs=ffreqs;SM.dirs=(180/pi)*dirs;SM.S=spec;SM.xaxisdir=90;
 
-disp('plotting spectrum...press any key to make data');
-plotspec(SM,1);
-drawnow;
-pause
+if options.plot
+    disp('plotting spectrum...press any key to make data');
+    plotspec2(SM,1);
+    % drawnow;
+    % pause
+end
 
-disp('writing spectrum matrix to file');
-writespec(SM,'specmat.spec');
+if options.file
+    disp('writing spectrum matrix to file');
+    writespec(SM,'specmat.spec');
+end
 
 if nargin<7 || ndat<=0;return;end;
 wns=wavenumber(omg,ID.depth*ones(size(omg)));
@@ -109,24 +120,27 @@ eamp=sqrt(2.0*df*spec*(180/pi)*ddir);
 data=makewavedata(eamp,omg,wns,dirs,ID.layout,ID.datatypes,ID.depth,ID.fs,ndat);
 
 for i=1:ns
-   gsnoise=gsamp(0,noise*var(data(:,1)),ndat);
+   gsnoise=gsamp(0,noise*var(data(:,i)),ndat);
    data(:,i)=data(:,i)+gsnoise;
 end
 
 ID.data=data;
 
-surfout = questdlg('Do you want to see a simulated sea surface?','DIWASP','Yes','No','No');	
-
-if strcmp(surfout,'Yes')
-xx=[1:2:50];
-yy=[1:2:100];
-surface=makerandomsea(eamp,wns,dirs,xx,yy);
-
-[py,px]=meshgrid(yy,xx);
-
-surf(px,py,surface);
-axis equal;
-
+if options.surface
+    surfout = questdlg('Do you want to see a simulated sea surface?','DIWASP','Yes','No','No');
+    
+    if strcmp(surfout,'Yes')
+        xx=[1:2:50];
+        yy=[1:2:100];
+        surface=makerandomsea(eamp,wns,dirs,xx,yy);
+        
+        [py,px]=meshgrid(yy,xx);
+        
+        figure;
+        surf(px,py,surface);
+        axis equal;
+        
+    end
 end
 
 
